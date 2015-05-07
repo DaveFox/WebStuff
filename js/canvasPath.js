@@ -1,11 +1,11 @@
-function main()
+function pathMain()
 {
+
 	//local scope variables
 	var canvas = null,
 		ctx = null,
 		CANVAS_WIDTH = 0,
 		CANVAS_HEIGHT = 0,
-		NUM_RECTS = 40,
 		FPS = 60,
 		entities = [];
 		
@@ -24,10 +24,21 @@ function main()
 			ctx.fillRect(this.x,this.y,this.width,this.height);
 		}
 	}
+	
+	var drawGrid = function drawGrid()
+	{
+		ctx.fillStyle = "black";
+		
+		ctx.moveTo(20, 0);
+		ctx.lineTo(20, CANVAS_HEIGHT);
+		
+		ctx.stroke();
+	};
 
 	var update = function update()
 	{
 		ctx.clearRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
+		drawGrid();
 	};
 
 	var draw = function draw()
@@ -36,69 +47,54 @@ function main()
 		{
 			ent.draw();
 		});
+		
+		ctx.fillStyle = "blue";
+		ctx.fillRect(CANVAS_WIDTH-25,5,20,20);
 	};
 
 	var move = function move()
 	{
 		//canvas bounds checking
 		entities.forEach(function (ent) 
-		{
-			ent.dirX ? ent.x++ : ent.x--;
-			ent.dirY ? ent.y++ : ent.y--;
-			
+		{	
 			if(ent.x+ent.width > CANVAS_WIDTH)
 			{
-				ent.dirX = 0;
+				ent.x = CANVAS_WIDTH -ent.width;
 			}
 			if(ent.y+ent.height > CANVAS_HEIGHT)
 			{
-				ent.dirY = 0;
+				ent.y = CANVAS_HEIGHT -ent.height;
 			}
 			if(ent.x < 0)
 			{
-				ent.dirX = 1;
+				ent.x = 1;
 			}
 			if(ent.y < 0)
 			{
-				ent.dirY = 1;
+				ent.x = 1;
 			}
 		});
-		
-		//TODO collision off each other?
 	};
 
-	var start = function start()
+	var startPath = function startPath()
 	{
-		canvas = document.getElementById('canvas1');
+		canvas = document.getElementById('canvas2');
 		ctx = canvas.getContext('2d');
 		CANVAS_WIDTH = canvas.width;
 		CANVAS_HEIGHT = canvas.height;
 
-		for(var i=0; i< NUM_RECTS; i++)
-		{
-			entities.push(new box(Math.random()*30, Math.random()*30 ,Math.random()*300, Math.random()*300));
-		}
-		
-		var loop = function loop()
+		entities.push(new box(20, 20 ,0, 100));
+
+		setInterval( function() 
 		{
 			move();
 			update();
 			draw();
-		}
-
-		setInterval( function() 
-		{
-			loop();
 		}, 1000/FPS);
-		/*var timer = setTimeout( function() 
-		{
-			loop();
-			timer = setTimeout(arguments.callee, 1000/FPS)
-		}, 1000/FPS);
-		*/
 		
 	};
-	start();
+
+	startPath();
 };
 
-main();
+pathMain();
